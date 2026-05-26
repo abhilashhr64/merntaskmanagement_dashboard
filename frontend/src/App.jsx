@@ -1,76 +1,50 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-
+import { useState } from "react";
+import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import DashboardCards from "./components/DashboardCards";
-import TaskList from "./components/TaskList";
 import CreateTask from "./components/CreateTask";
+import TaskList from "./components/TaskList";
 
 function App() {
-
   const [tasks, setTasks] = useState([]);
 
-  useEffect(() => {
-
-    fetchTasks();
-
-  }, []);
-
-  const fetchTasks = async () => {
-
-    try {
-
-      const response = await axios.get(
-        "http://localhost:5000/api/tasks"
-      );
-
-      setTasks(response.data);
-
-    } catch (error) {
-
-      console.log(error);
-
-    }
+  const addTask = (task) => {
+    setTasks([...tasks, task]);
   };
 
-  const deleteTask = async (id) => {
+  const deleteTask = (indexToDelete) => {
+    const updatedTasks = tasks.filter(
+      (_, index) => index !== indexToDelete
+    );
 
-    try {
-
-      await axios.delete(
-        `http://localhost:5000/api/tasks/${id}`
-      );
-
-      fetchTasks();
-
-    } catch (error) {
-
-      console.log(error);
-
-    }
+    setTasks(updatedTasks);
   };
 
   return (
-    <div className="md:flex bg-black text-white min-h-screen">
-
+    <div className="flex bg-black text-white min-h-screen">
+      
       <Sidebar />
 
-      <div className="flex-1 p-8">
+      <div className="flex-1">
 
-        <h1 className="text-2xl md:text-4xl font-bold">
-          Dashboard
-        </h1>
+        <Navbar />
 
-        <DashboardCards tasks={tasks} />
+        <div className="p-8">
 
-        <TaskList
-          tasks={tasks}
-          deleteTask={deleteTask}
-        />
+          <h1 className="text-5xl font-bold mb-8">
+            Dashboard
+          </h1>
 
-        <CreateTask
-          fetchTasks={fetchTasks}
-        />
+          <DashboardCards tasks={tasks} />
+
+          <TaskList
+            tasks={tasks}
+            deleteTask={deleteTask}
+          />
+
+          <CreateTask addTask={addTask} />
+
+        </div>
 
       </div>
 
